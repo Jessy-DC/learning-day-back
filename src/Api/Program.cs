@@ -25,11 +25,16 @@ app.MapPost("/notions", async Task<Results<Ok<NotionResponse>, BadRequest<string
     return TypedResults.Ok(NotionResponse.From(notion));
 });
 
-app.MapGet("/notions", async Task<Ok<IReadOnlyList<NotionResponse>>>(NotionService service, CancellationToken cancellationToken) =>
-{
-    var notions = await service.GetAllAsync(cancellationToken);
-    return TypedResults.Ok(notions.Select(NotionResponse.From).ToList());
-});
+app.MapGet("/notions",
+    async (NotionService service, CancellationToken cancellationToken) =>
+    {
+        var notions = await service.GetAllAsync(cancellationToken);
+
+        return Results.Ok(
+            notions.Select(NotionResponse.From).ToList()
+        );
+    });
+
 
 app.MapGet("/reviews/next", async Task<Results<Ok<ReviewNotionResponse>, NotFound>>(ReviewService service, CancellationToken cancellationToken) =>
 {
