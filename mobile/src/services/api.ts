@@ -1,5 +1,5 @@
-const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_BASE_URL ?? "http://localhost:3000";
+export const BASE_URL =
+  "https://learning-day-api-b2c4g2a8gscuagb7.westeurope-01.azurewebsites.net";
 
 export type Notion = {
   id: string;
@@ -20,26 +20,34 @@ export type QuizAnswerResult = {
 };
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options?.headers ?? {}),
-    },
-    ...options,
-  });
+  try {
+    const response = await fetch(`${BASE_URL}${path}`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(options?.headers ?? {}),
+      },
+      ...options,
+    });
 
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Une erreur est survenue");
+    if (!response.ok) {
+      const body = await response.text();
+      throw new Error(body || "La requête a échoué.");
+    }
+
+    return response.json() as Promise<T>;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message || "Erreur réseau.");
+    }
+
+    throw new Error("Erreur réseau.");
   }
-
-  return response.json() as Promise<T>;
 }
 
-export async function createNotion(title: string) {
+export async function createNotion(term: string): Promise<Notion> {
   return request<Notion>("/notions", {
     method: "POST",
-    body: JSON.stringify({ title }),
+    body: JSON.stringify({ title: term }),
   });
 }
 
