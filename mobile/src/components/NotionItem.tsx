@@ -1,19 +1,43 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type NotionItemProps = {
   title: string;
   score?: number | null;
+  isDeleting?: boolean;
+  onDelete?: () => void;
 };
 
-export function NotionItem({ title, score }: NotionItemProps) {
+export function NotionItem({
+  title,
+  score,
+  isDeleting = false,
+  onDelete,
+}: NotionItemProps) {
   const badgeLabel = score === null || score === undefined ? "·" : `${score}%`;
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
-      <View style={styles.badge}>
-        <Text style={styles.badgeText}>{badgeLabel}</Text>
+      <View style={styles.actionsContainer}>
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>{badgeLabel}</Text>
+        </View>
+        {onDelete ? (
+          <Pressable
+            style={({ pressed }) => [
+              styles.deleteButton,
+              pressed ? styles.deleteButtonPressed : null,
+              isDeleting ? styles.deleteButtonDisabled : null,
+            ]}
+            disabled={isDeleting}
+            onPress={onDelete}
+          >
+            <Text style={styles.deleteButtonText}>
+              {isDeleting ? "..." : "Supprimer"}
+            </Text>
+          </Pressable>
+        ) : null}
       </View>
     </View>
   );
@@ -38,6 +62,10 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 12,
   },
+  actionsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   badge: {
     backgroundColor: "#0f172a",
     paddingHorizontal: 10,
@@ -47,6 +75,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   badgeText: {
+    color: "#f8fafc",
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  deleteButton: {
+    backgroundColor: "#dc2626",
+    marginLeft: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  deleteButtonPressed: {
+    opacity: 0.8,
+  },
+  deleteButtonDisabled: {
+    opacity: 0.6,
+  },
+  deleteButtonText: {
     color: "#f8fafc",
     fontSize: 12,
     fontWeight: "600",

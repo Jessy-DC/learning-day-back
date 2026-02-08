@@ -23,4 +23,7 @@ public sealed class NotionService
 
     public Task<IReadOnlyList<Notion>> GetAllAsync(CancellationToken cancellationToken)
         => _notionRepository.GetAllAsync(cancellationToken);
+
+    public Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
+        => _notionRepository.DeleteAsync(id, cancellationToken);
 }

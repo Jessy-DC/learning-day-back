@@ -36,6 +36,18 @@ app.MapGet("/notions",
     });
 
 
+app.MapDelete("/notions/{id:guid}", async Task<Results<NoContent, NotFound>>(Guid id, NotionService service, CancellationToken cancellationToken) =>
+{
+    var deleted = await service.DeleteAsync(id, cancellationToken);
+    if (!deleted)
+    {
+        return TypedResults.NotFound();
+    }
+
+    return TypedResults.NoContent();
+});
+
+
 app.MapGet("/reviews/next", async Task<Results<Ok<ReviewNotionResponse>, NotFound>>(ReviewService service, CancellationToken cancellationToken) =>
 {
     var notion = await service.GetNextNotionAsync(cancellationToken);
