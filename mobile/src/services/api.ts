@@ -34,6 +34,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
       throw new Error(body || "La requête a échoué.");
     }
 
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
     return response.json() as Promise<T>;
   } catch (error) {
     if (error instanceof Error) {
@@ -53,6 +57,12 @@ export async function createNotion(term: string): Promise<Notion> {
 
 export async function listNotions() {
   return request<Notion[]>("/notions");
+}
+
+export async function deleteNotion(notionId: string) {
+  return request<void>(`/notions/${notionId}`, {
+    method: "DELETE",
+  });
 }
 
 export async function fetchQuiz() {

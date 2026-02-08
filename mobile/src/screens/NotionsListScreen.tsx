@@ -7,12 +7,13 @@ import {
   View,
 } from "react-native";
 import { NotionItem } from "../components/NotionItem";
-import { listNotions, Notion } from "../services/api";
+import { deleteNotion, listNotions, Notion } from "../services/api";
 
 export function NotionsListScreen() {
   const [notions, setNotions] = useState<Notion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [deletingNotionId, setDeletingNotionId] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -41,6 +42,22 @@ export function NotionsListScreen() {
     };
   }, []);
 
+  const handleDelete = async (notionId: string) => {
+    setDeletingNotionId(notionId);
+    setErrorMessage("");
+
+    try {
+      await deleteNotion(notionId);
+      setNotions((currentNotions) =>
+        currentNotions.filter((notion) => notion.id !== notionId)
+      );
+    } catch (error) {
+      setErrorMessage("Impossible de supprimer cette notion.");
+    } finally {
+      setDeletingNotionId(null);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {isLoading ? (
@@ -54,7 +71,12 @@ export function NotionsListScreen() {
             contentContainerStyle={styles.list}
             ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
             renderItem={({ item }) => (
-              <NotionItem title={item.title} score={item.score ?? null} />
+              <NotionItem
+                title={item.title}
+                score={item.score ?? null}
+                isDeleting={deletingNotionId === item.id}
+                onDelete={() => handleDelete(item.id)}
+              />
             )}
             ListEmptyComponent={
               <Text style={styles.emptyText}>

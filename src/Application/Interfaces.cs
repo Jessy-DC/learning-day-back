@@ -7,6 +7,7 @@ public interface INotionRepository
     Task AddAsync(Notion notion, CancellationToken cancellationToken);
     Task<IReadOnlyList<Notion>> GetAllAsync(CancellationToken cancellationToken);
     Task<Notion?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken);
 }
 
 public interface IReviewRepository
