@@ -1,6 +1,7 @@
 using LearningDay.Application;
 using LearningDay.Domain;
 using Moq;
+using Xunit;
 
 namespace LearningDay.Tests.Application;
 
