@@ -103,3 +103,5 @@ internal sealed record ReviewResponse(Guid ReviewId, Guid NotionId, string UserA
     public static ReviewResponse From(ReviewResult result)
         => new(result.Review.Id, result.Notion.Id, result.Review.UserAnswer, result.Review.Score, result.Review.Feedback, result.Review.IdealAnswer, result.Review.ReviewedAt);
 }
+
+public partial class Program { }
